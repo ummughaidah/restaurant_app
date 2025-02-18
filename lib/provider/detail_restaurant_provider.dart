@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/model/detail_restaurant_model.dart';
-import 'package:restaurant_app/service/service_api.dart';
+import 'package:restaurant_app/data/service/service_api.dart';
+import 'package:restaurant_app/static/restaurant_detail_result_state.dart';
 
 class DetailRestaurantProvider extends ChangeNotifier {
-  final ServiceApi serviceApi;
-  DetailRestaurantModel? _restaurant;
-  bool _isLoading = false;
-  String _errorMessage = '';
+  final ServiceApi _serviceApi;
 
-  DetailRestaurantProvider({required this.serviceApi});
+  DetailRestaurantProvider(this._serviceApi);
 
-  DetailRestaurantModel? get restaurant => _restaurant;
-  bool get isLoading => _isLoading;
-  String get errorMessage => _errorMessage;
+  RestaurantDetailResultState _resultState = RestaurantDetailNoneState();
+
+  RestaurantDetailResultState get resurtState => _resultState;
 
   Future<void> fetchDetailRestaurant(String id) async {
-    _isLoading = true;
-    notifyListeners();
-
     try {
-      _restaurant = await serviceApi.getDetailRestaurant(id);
-      _errorMessage = '';
-    } catch (e) {
-      _errorMessage = e.toString();
-      _restaurant = null;
-    }
+      _resultState = RestaurantDetailLoadingState();
+      notifyListeners();
 
-    _isLoading = false;
-    notifyListeners();
+      final result = await _serviceApi.getDetailRestaurant(id);
+
+      if (result!.error) {
+        _resultState = RestaurantDetailErrorState(result.message);
+        notifyListeners();
+      } else {
+        _resultState = RestaurantDetailLoadedState(result.restaurant);
+        notifyListeners();
+      }
+    } on Exception catch (e) {
+      _resultState = RestaurantDetailErrorState(e.toString());
+      notifyListeners();
+    }
   }
 }

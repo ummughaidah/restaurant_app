@@ -1,44 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/model/search_model.dart';
-import 'package:restaurant_app/service/service_api.dart';
+import 'package:restaurant_app/data/service/service_api.dart';
+import 'package:restaurant_app/static/restaurant_search_result_state.dart';
 
 class SearchProvider extends ChangeNotifier {
   final ServiceApi _serviceApi;
 
-  SearchProvider({required ServiceApi serviceApi}) : _serviceApi = serviceApi;
+  SearchProvider(this._serviceApi);
 
-  SearchModel? _searchResult;
-  bool _isLoading = false;
-  String _errorMessage = '';
-  String _query = '';
+  RestaurantSearchResultState _resultState = RestaurantSearchNoneState();
 
-  SearchModel? get searchResult => _searchResult;
-  bool get isLoading => _isLoading;
-  String get errorMessage => _errorMessage;
-  bool get isSearching => _query.isNotEmpty;
-
-  void _setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
+  RestaurantSearchResultState get resultState => _resultState;
 
   Future<void> searchRestaurants(String query) async {
-    _query = query;
-    if (query.isEmpty) {
-      _searchResult = null;
-      notifyListeners();
-      return;
-    }
-
-    _setLoading(true);
-    _errorMessage = '';
-
     try {
-      _searchResult = await _serviceApi.getSearchRestaurant(query);
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _setLoading(false);
+      _resultState = RestaurantSearchLoadingState();
+      notifyListeners();
+
+      final result = await _serviceApi.getSearchRestaurant(query);
+
+      if (result!.error) {
+        _resultState = RestaurantSearchErrorState('Data not found');
+        notifyListeners();
+      } else {
+        _resultState = RestaurantSearchLoadedState(result.restaurants);
+        notifyListeners();
+      }
+    } on Exception catch (e) {
+      _resultState = RestaurantSearchErrorState(e.toString());
+      notifyListeners();
     }
   }
 }

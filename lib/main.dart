@@ -4,21 +4,20 @@ import 'package:restaurant_app/provider/detail_restaurant_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/provider/search_provider.dart';
 import 'package:restaurant_app/routes/navigation_route.dart';
-import 'package:restaurant_app/screen/detail_restaurant.dart';
+import 'package:restaurant_app/screen/detail/detail_restaurant.dart';
 import 'package:restaurant_app/screen/restaurant_screen.dart';
 import 'package:restaurant_app/screen/search_screen.dart';
-import 'package:restaurant_app/service/service_api.dart';
+import 'package:restaurant_app/data/service/service_api.dart';
 import 'package:restaurant_app/theme/restaurant_theme.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RestaurantProvider()),
+        ChangeNotifierProvider(create: (_) => RestaurantProvider(ServiceApi())),
         ChangeNotifierProvider(
-            create: (_) => DetailRestaurantProvider(serviceApi: ServiceApi())),
-        ChangeNotifierProvider(
-            create: (_) => SearchProvider(serviceApi: ServiceApi())),
+            create: (_) => DetailRestaurantProvider(ServiceApi())),
+        ChangeNotifierProvider(create: (_) => SearchProvider(ServiceApi())),
       ],
       child: const MainApp(),
     ),

@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/static/restaurant_list_result_state.dart';
 import 'package:restaurant_app/widget/card_restaurant_list.dart';
 import 'package:restaurant_app/widget/custom_form_field.dart';
 
-class RestaurantScreen extends StatelessWidget {
+class RestaurantScreen extends StatefulWidget {
   const RestaurantScreen({super.key});
+
+  @override
+  State<RestaurantScreen> createState() => _RestaurantScreenState();
+}
+
+class _RestaurantScreenState extends State<RestaurantScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<RestaurantProvider>().fetchRestaurants();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,37 +62,40 @@ class RestaurantScreen extends StatelessWidget {
             Expanded(
               child: Consumer<RestaurantProvider>(
                 builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (provider.errorMessage != null) {
-                    return Center(child: Text(provider.errorMessage!));
-                  }
+                  return switch (provider.resultState) {
+                    RestaurantListLoadingState() => Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    RestaurantListLoadedState(data: var listOfRestaurant) =>
+                      ListView.builder(
+                        itemCount: listOfRestaurant.length,
+                        itemBuilder: (context, index) {
+                          final restaurant = listOfRestaurant[index];
 
-                  final listOfRestaurant = provider.restaurants;
-                  return ListView.builder(
-                    itemCount: listOfRestaurant.length,
-                    itemBuilder: (context, index) {
-                      final restaurant = listOfRestaurant[index];
-
-                      return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: CardRestaurantList(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/detail',
-                              arguments: restaurant.id,
-                            );
-                          },
-                          picture:
-                              'https://restaurant-api.dicoding.dev/images/small/${restaurant.pictureId}',
-                          title: restaurant.name,
-                          address: restaurant.city,
-                          rating: restaurant.rating,
-                        ),
-                      );
-                    },
-                  );
+                          return Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: CardRestaurantList(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/detail',
+                                  arguments: restaurant.id,
+                                );
+                              },
+                              picture:
+                                  'https://restaurant-api.dicoding.dev/images/small/${restaurant.pictureId}',
+                              title: restaurant.name,
+                              address: restaurant.city,
+                              rating: restaurant.rating,
+                            ),
+                          );
+                        },
+                      ),
+                    RestaurantListErrorState(error: var message) => Center(
+                        child: Text(message),
+                      ),
+                    _ => SizedBox(),
+                  };
                 },
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/provider/search_provider.dart';
+import 'package:restaurant_app/static/restaurant_search_result_state.dart';
 import 'package:restaurant_app/widget/card_restaurant_list.dart';
 import 'package:restaurant_app/widget/custom_form_field.dart';
 
@@ -33,8 +34,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final searchProvider = Provider.of<SearchProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -53,39 +52,42 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             ),
           ),
-          if (searchProvider.isLoading)
-            Center(child: CircularProgressIndicator())
-          else if (searchProvider.errorMessage.isNotEmpty)
-            Center(child: Text("Error: ${searchProvider.errorMessage}"))
-          else if (searchProvider.searchResult != null)
-            Expanded(
-              child: ListView.builder(
-                itemCount: searchProvider.searchResult!.restaurants.length,
-                itemBuilder: (context, index) {
-                  final restaurant =
-                      searchProvider.searchResult!.restaurants[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: CardRestaurantList(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/detail',
-                          arguments: restaurant.id,
-                        );
-                      },
-                      picture:
-                          'https://restaurant-api.dicoding.dev/images/small/${restaurant.pictureId}',
-                      title: restaurant.name,
-                      address: restaurant.city,
-                      rating: restaurant.rating,
-                    ),
-                  );
-                },
-              ),
-            )
-          else
-            Text("No data found. Enter a keyword to search."),
+          Expanded(child:
+              Consumer<SearchProvider>(builder: (context, provider, child) {
+            return switch (provider.resultState) {
+              RestaurantSearchLoadingState() => Center(
+                  child: CircularProgressIndicator(),
+                ),
+              RestaurantSearchLoadedState(data: var restaurants) =>
+                ListView.builder(
+                  itemCount: restaurants.length,
+                  itemBuilder: (context, index) {
+                    final restaurant = restaurants[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: CardRestaurantList(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/detail',
+                            arguments: restaurant.id,
+                          );
+                        },
+                        picture:
+                            'https://restaurant-api.dicoding.dev/images/small/${restaurant.pictureId}',
+                        title: restaurant.name,
+                        address: restaurant.city,
+                        rating: restaurant.rating,
+                      ),
+                    );
+                  },
+                ),
+              RestaurantSearchErrorState(error: var message) => Center(
+                  child: Text(message),
+                ),
+              _ => Text("No data found. Enter a keyword to search."),
+            };
+          }))
         ],
       ),
     );

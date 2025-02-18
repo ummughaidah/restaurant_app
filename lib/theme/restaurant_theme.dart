@@ -29,6 +29,7 @@ class RestaurantTheme {
       textTheme: _textTheme,
       appBarTheme:
           AppBarTheme(backgroundColor: Color.fromARGB(255, 134, 169, 140)),
+      cardColor: Colors.white,
       useMaterial3: true,
     );
   }
@@ -39,6 +40,7 @@ class RestaurantTheme {
       brightness: Brightness.dark,
       textTheme: _textTheme,
       appBarTheme: AppBarTheme(backgroundColor: Color.fromARGB(255, 1, 39, 7)),
+      cardColor: Colors.black,
       useMaterial3: true,
     );
   }
