@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
+import 'package:restaurant_app/provider/detail_restaurant_provider.dart';
+import 'package:restaurant_app/provider/favorite_icon_provider.dart';
+import 'package:restaurant_app/screen/detail/favorite_icon_widget.dart';
+import 'package:restaurant_app/static/restaurant_detail_result_state.dart';
 
 class BodyDetailScreen extends StatelessWidget {
   final Restaurant restaurant;
@@ -38,6 +43,23 @@ class BodyDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => FavoriteIconProvider(),
+                  child: Consumer<DetailRestaurantProvider>(
+                      builder: (_, provider, child) {
+                    return switch (provider.resurtState) {
+                      RestaurantDetailLoadedState(data: var restaurant) =>
+                        Positioned(
+                          bottom: 10,
+                          right: 10,
+                          child: FavoriteIconWidget(restaurant: restaurant),
+                        ),
+                      _ => Center(
+                          child: Text('No data favorite'),
+                        ),
+                    };
+                  }),
                 ),
               ],
             ),

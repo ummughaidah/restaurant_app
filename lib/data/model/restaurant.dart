@@ -43,6 +43,17 @@ class Restaurant {
           [],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      "id": id,
+      "name": name,
+      "description": description,
+      "city": city,
+      "pictureId": pictureId,
+      "rating": rating,
+    };
+  }
 }
 
 class Category {
