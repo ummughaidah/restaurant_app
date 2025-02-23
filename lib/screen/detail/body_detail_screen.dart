@@ -51,8 +51,8 @@ class BodyDetailScreen extends StatelessWidget {
                     return switch (provider.resurtState) {
                       RestaurantDetailLoadedState(data: var restaurant) =>
                         Positioned(
-                          bottom: 10,
-                          right: 10,
+                          bottom: 5,
+                          right: 5,
                           child: FavoriteIconWidget(restaurant: restaurant),
                         ),
                       _ => Center(

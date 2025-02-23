@@ -45,10 +45,22 @@ class _FavoriteIconWidgetState extends State<FavoriteIconWidget> {
         favoriteIconProvider.isBookmarked = !isBookmarked;
         localDbProvider.loadAllRestaurantValue();
       },
-      icon: Icon(
-        context.watch<FavoriteIconProvider>().isBookmarked
-            ? Icons.favorite
-            : Icons.favorite_outline,
+      icon: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: Theme.of(context).cardColor,
+        ),
+        child: Icon(
+          context.watch<FavoriteIconProvider>().isBookmarked
+              ? Icons.favorite
+              : Icons.favorite_outline,
+          size: 24,
+          color: context.watch<FavoriteIconProvider>().isBookmarked
+              ? Colors.red
+              : Colors.grey,
+        ),
       ),
     );
   }

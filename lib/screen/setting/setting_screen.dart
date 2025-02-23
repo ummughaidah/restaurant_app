@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/provider/theme_setting_provider.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -12,6 +14,16 @@ class SettingScreen extends StatelessWidget {
           style: TextTheme.of(context).headlineSmall,
         ),
       ),
+      body: Consumer<ThemeSettingProvider>(builder: (_, provider, __) {
+        return SwitchListTile(
+          title: Text('Dark Theme'),
+          value: provider.isDarkTheme,
+          onChanged: (value) {
+            provider.setDarkTheme(value);
+            provider.setTheme(value);
+          },
+        );
+      }),
     );
   }
 }

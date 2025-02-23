@@ -6,6 +6,7 @@ import 'package:restaurant_app/provider/index_nav_provider.dart';
 import 'package:restaurant_app/provider/local_db_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/provider/search_provider.dart';
+import 'package:restaurant_app/provider/theme_setting_provider.dart';
 import 'package:restaurant_app/routes/navigation_route.dart';
 import 'package:restaurant_app/screen/detail/detail_restaurant.dart';
 import 'package:restaurant_app/screen/favorite/favorite_screen.dart';
@@ -16,7 +17,7 @@ import 'package:restaurant_app/data/service/service_api.dart';
 import 'package:restaurant_app/screen/setting/setting_screen.dart';
 import 'package:restaurant_app/theme/restaurant_theme.dart';
 
-void main() {
+Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
@@ -33,6 +34,7 @@ void main() {
             context.read<LocalDbService>(),
           ),
         ),
+        ChangeNotifierProvider(create: (_) => ThemeSettingProvider()),
       ],
       child: const MainApp(),
     ),
@@ -44,21 +46,32 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: RestaurantTheme.lightTheme,
-      darkTheme: RestaurantTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      initialRoute: NavigationRoute.homeRoute.route,
-      routes: {
-        NavigationRoute.restaurantRoute.route: (context) => RestaurantScreen(),
-        NavigationRoute.detailRoute.route: (context) => DetailRestaurant(
-              id: ModalRoute.of(context)?.settings.arguments as String,
-            ),
-        NavigationRoute.searchRoute.route: (context) => SearchScreen(),
-        NavigationRoute.homeRoute.route: (context) => HomeScreen(),
-        NavigationRoute.favoriteRoute.route: (context) => FavoriteScreen(),
-        NavigationRoute.settingRoute.route: (context) => SettingScreen(),
+    return Consumer<ThemeSettingProvider>(
+      builder: (context, provider, _) {
+        final Brightness systemBrightness =
+            MediaQuery.of(context).platformBrightness;
+        final bool isSystemDark = systemBrightness == Brightness.dark;
+
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: RestaurantTheme.lightTheme,
+          darkTheme: RestaurantTheme.darkTheme,
+          themeMode: provider.isDarkTheme
+              ? ThemeMode.dark
+              : (isSystemDark ? ThemeMode.light : ThemeMode.light),
+          initialRoute: NavigationRoute.homeRoute.route,
+          routes: {
+            NavigationRoute.restaurantRoute.route: (context) =>
+                RestaurantScreen(),
+            NavigationRoute.detailRoute.route: (context) => DetailRestaurant(
+                  id: ModalRoute.of(context)?.settings.arguments as String,
+                ),
+            NavigationRoute.searchRoute.route: (context) => SearchScreen(),
+            NavigationRoute.homeRoute.route: (context) => HomeScreen(),
+            NavigationRoute.favoriteRoute.route: (context) => FavoriteScreen(),
+            NavigationRoute.settingRoute.route: (context) => SettingScreen(),
+          },
+        );
       },
     );
   }
