@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/local/local_db_service.dart';
+import 'package:restaurant_app/data/service/local_notification_service.dart';
 import 'package:restaurant_app/provider/detail_restaurant_provider.dart';
 import 'package:restaurant_app/provider/index_nav_provider.dart';
 import 'package:restaurant_app/provider/local_db_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/provider/search_provider.dart';
-import 'package:restaurant_app/provider/theme_setting_provider.dart';
+import 'package:restaurant_app/provider/setting_provider.dart';
 import 'package:restaurant_app/routes/navigation_route.dart';
 import 'package:restaurant_app/screen/detail/detail_restaurant.dart';
 import 'package:restaurant_app/screen/favorite/favorite_screen.dart';
@@ -18,6 +19,11 @@ import 'package:restaurant_app/screen/setting/setting_screen.dart';
 import 'package:restaurant_app/theme/restaurant_theme.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final notificationService = LocalNotificationService();
+  await notificationService.configureLocalTimeZone();
+  await notificationService.initializeNotifications();
+
   runApp(
     MultiProvider(
       providers: [
@@ -34,7 +40,8 @@ Future<void> main() async {
             context.read<LocalDbService>(),
           ),
         ),
-        ChangeNotifierProvider(create: (_) => ThemeSettingProvider()),
+        ChangeNotifierProvider(
+            create: (_) => SettingProvider(notificationService)),
       ],
       child: const MainApp(),
     ),
@@ -46,7 +53,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeSettingProvider>(
+    return Consumer<SettingProvider>(
       builder: (context, provider, _) {
         final Brightness systemBrightness =
             MediaQuery.of(context).platformBrightness;
