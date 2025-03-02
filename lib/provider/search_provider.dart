@@ -25,8 +25,10 @@ class SearchProvider extends ChangeNotifier {
         _resultState = RestaurantSearchLoadedState(result.restaurants);
         notifyListeners();
       }
+      // ignore: unused_catch_clause
     } on Exception catch (e) {
-      _resultState = RestaurantSearchErrorState(e.toString());
+      _resultState = RestaurantSearchErrorState(
+          'Failed to load data. Please check your connections.');
       notifyListeners();
     }
   }

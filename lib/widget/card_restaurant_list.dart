@@ -24,6 +24,9 @@ class CardRestaurantList extends StatelessWidget {
         children: [
           Image.network(
             picture,
+            errorBuilder: (_, __, ___) {
+              return const Icon(Icons.error_outline);
+            },
             width: 150,
             height: 70,
             fit: BoxFit.cover,

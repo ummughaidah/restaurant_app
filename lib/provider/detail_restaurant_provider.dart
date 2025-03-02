@@ -25,8 +25,10 @@ class DetailRestaurantProvider extends ChangeNotifier {
         _resultState = RestaurantDetailLoadedState(result.restaurant);
         notifyListeners();
       }
+      // ignore: unused_catch_clause
     } on Exception catch (e) {
-      _resultState = RestaurantDetailErrorState(e.toString());
+      _resultState = RestaurantDetailErrorState(
+          'Failed to load data. Please check your connections.');
       notifyListeners();
     }
   }

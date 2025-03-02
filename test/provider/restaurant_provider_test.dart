@@ -68,6 +68,7 @@ void main() {
 
     expect(provider.resultState, isA<RestaurantListErrorState>());
     final state = provider.resultState as RestaurantListErrorState;
-    expect(state.error, contains("Gagal mengambil data"));
+    expect(state.error,
+        contains('Failed to load data. Please check your connections.'));
   });
 }
