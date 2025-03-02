@@ -18,7 +18,6 @@ void main() {
     mockServiceApi = MockServiceApi();
     restaurantProvider = RestaurantProvider(mockServiceApi);
 
-    // Pastikan semua fungsi dipanggil tanpa error
     registerFallbackValue(RestaurantResponse(
       restaurants: [],
       error: false,
@@ -48,21 +47,16 @@ void main() {
       ),
     );
 
-    // Pastikan AppBar dengan teks 'Restaurant' muncul
     expect(find.text('Restaurant'), findsOneWidget);
 
-    // Pastikan teks rekomendasi restoran muncul
     expect(find.text('Recommendation restaurant for you!'), findsOneWidget);
 
-    // Pastikan ada form pencarian (CustomFormField)
     expect(find.byType(CustomFormField), findsOneWidget);
 
-    // Pastikan indikator loading muncul saat state masih loading
     restaurantProvider.fetchRestaurants();
-    await tester.pump(); // Memproses perubahan state pertama (loading)
+    await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    // Menunggu hasil dari API
     await tester.pumpAndSettle();
     expect(find.byType(ListView), findsOneWidget);
   });

@@ -133,37 +133,4 @@ class LocalNotificationService {
     await flutterLocalNotificationsPlugin.cancel(id);
     debugPrint('Notification with ID $id canceled');
   }
-
-  Future<void> showNotification({
-    required int id,
-    required String title,
-    required String body,
-    required String payload,
-    String channelId = "1",
-    String channelName = "Simple Notification",
-  }) async {
-    final notificationDetails = NotificationDetails(
-      android: AndroidNotificationDetails(
-        channelId,
-        channelName,
-        importance: Importance.max,
-        priority: Priority.high,
-        styleInformation: BigTextStyleInformation(body),
-      ),
-      iOS: const DarwinNotificationDetails(),
-    );
-
-    try {
-      await flutterLocalNotificationsPlugin.show(
-        id,
-        title,
-        body,
-        notificationDetails,
-        payload: payload,
-      );
-      debugPrint('Notification shown successfully');
-    } catch (e) {
-      debugPrint('Error showing notification: $e');
-    }
-  }
 }

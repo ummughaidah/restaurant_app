@@ -29,13 +29,6 @@ class SettingScreen extends StatelessWidget {
               value: provider.isReminderOn,
               onChanged: (value) async {
                 provider.toggleReminder(value);
-                // final notificationService = LocalNotificationService();
-                // await notificationService.showNotification(
-                //   id: 1,
-                //   title: "Test Notification",
-                //   body: "This is a test notification",
-                //   payload: "test_payload",
-                // );
               },
             ),
           ],

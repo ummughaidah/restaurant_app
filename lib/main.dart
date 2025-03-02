@@ -43,10 +43,6 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
             create: (_) => SettingProvider(notificationService)),
-        Provider(
-          create: (context) =>
-              LocalNotificationService()..initializeNotifications(),
-        ),
       ],
       child: const MainApp(),
     ),
