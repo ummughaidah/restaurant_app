@@ -27,8 +27,15 @@ class SettingScreen extends StatelessWidget {
             SwitchListTile(
               title: Text('Daily Lunch Reminder'),
               value: provider.isReminderOn,
-              onChanged: (value) {
+              onChanged: (value) async {
                 provider.toggleReminder(value);
+                // final notificationService = LocalNotificationService();
+                // await notificationService.showNotification(
+                //   id: 1,
+                //   title: "Test Notification",
+                //   body: "This is a test notification",
+                //   payload: "test_payload",
+                // );
               },
             ),
           ],

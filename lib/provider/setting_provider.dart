@@ -28,7 +28,7 @@ class SettingProvider extends ChangeNotifier {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setBool(keyReminder, value);
     if (value) {
-      await _notificationService.scheduleDailyTElevenAMNotification(id: 0);
+      await _notificationService.scheduleDailyElevenAMNotification(id: 0);
     } else {
       await _notificationService.cancelNotification(0);
     }

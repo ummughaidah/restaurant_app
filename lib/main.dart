@@ -23,6 +23,7 @@ Future<void> main() async {
   final notificationService = LocalNotificationService();
   await notificationService.configureLocalTimeZone();
   await notificationService.initializeNotifications();
+  await notificationService.requestPermissions();
 
   runApp(
     MultiProvider(
@@ -42,6 +43,10 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
             create: (_) => SettingProvider(notificationService)),
+        Provider(
+          create: (context) =>
+              LocalNotificationService()..initializeNotifications(),
+        ),
       ],
       child: const MainApp(),
     ),
