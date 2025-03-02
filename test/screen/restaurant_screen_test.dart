@@ -64,8 +64,6 @@ void main() {
 
     // Menunggu hasil dari API
     await tester.pumpAndSettle();
-
-    // Pastikan tampilan kosong karena tidak ada restoran dalam hasil
     expect(find.byType(ListView), findsOneWidget);
   });
 }
